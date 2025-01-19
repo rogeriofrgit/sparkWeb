@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cadastro</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="menu"></div>
+    <div class="w3-container w3-light-grey" style="max-width: 900px; margin: auto; margin-top: 50px; padding: 20px; border-radius: 5px;">
+        <h2 class="w3-center">Alterar Cadastro</h2>
+        <br>
+        <input type="hidden" id="id">
+        <label for="nome" class="w3-text-gray">Nome</label>
+        <input type="text" id="nome" class="w3-input w3-border w3-round">
+        <br>
+        <label for="email" class="w3-text-gray">Email</label>
+        <input type="email" id="email" class="w3-input w3-border w3-round">
+        <br>
+        <button class="w3-button w3-green w3-round" onclick="alterarUsuario()">Alterar</button>
+        <a href="/cadastro/contato/contato.html"><button class="w3-button w3-gray w3-round">Cancelar</button></a>
+        <br>        
+        <br>        
+    </div>
+    <!-- Java Script externo para carregar o menu -->
+    <script src="/js/include.js"></script>
+
+    <!-- Java Script externo para carregar as constantes -->
+    <script src="/js/constantes.js"></script>
+
+    <!-- Java Script com as funções específicas da página -->
+    <script>        
+        async function carregarUsuario() {
+            //obtem o id passado pela URL como um www-form-encodeurl
+            const idUrl = Number(obterParametroId()); 
+
+            //caso nao exista parametro informado na URL retorna para a 
+            //pagina de cadasto com codigo de status = 2 que informa erro
+            if (idUrl == 0)
+                window.location.href = `/cadastro/contato/contato.html?status=${statusOperacao.ID_NAO_INFORMADO}`;
+            
+            //obtem os campos do html
+            const id = document.getElementById('id');
+            const nome = document.getElementById('nome');
+            const email = document.getElementById('email');
+
+            let response;
+
+            try {
+                //realiza a chamada da API para consultar o contato 
+                response = await fetch(`http://localhost:8080/consultar/${idUrl}`);
+            } catch (error) {
+               window.location.href = `/cadastro/contato/contato.html?status=${statusOperacao.ERRO_GERAL}`;
+            }
+
+            if (httpResponseOK(response)){
+                //converte os dados retornados no formato json para 
+                //objeto no JavaScript 
+                const user = await response.json();
+                
+                //insere os dados nos respectivos campos do html
+                id.value = user.id;
+                nome.value = user.nome;
+                email.value = user.email;
+            }            
+
+        }
+        
+        async function alterarUsuario() {
+            const id = document.getElementById('id').value;
+            
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            
+            parametrosBody = `nome=${nome}&email=${email}`;
+            
+            let response;
+
+            try {
+                const conteudoHttp = {
+                    method: 'PUT',
+                    headers: { "Content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
+                    body: parametrosBody
+                }
+
+                response = await fetch(`http://localhost:8080/alterar/${id}`, conteudoHttp);
+            } catch (error) {
+                window.location.href = `/cadastro/contato/contato.html?status=${statusOperacao.ERRO_GERAL}`;
+            }                
+            
+            if (httpResponseOK(response))
+                //retorna para a pagina de cadastro informando sucesso com status = 1
+                window.location.href = `/cadastro/contato/contato.html?status=${statusOperacao.SUCESSO}`;
+        }   
+        
+        function httpResponseOK(response){
+            if (!response.ok) {
+                window.location.href = `/cadastro/contato/contato.html?status=${statusOperacao.ENDPOINT_NAO_ENCONTRADO}`;
+                return false; 
+            } else if (response.status == 204) {
+                window.location.href = `/cadastro/contato/contato.html?status=${statusOperacao.ID_NAO_ENCONTRADO}`;
+                return false; 
+            }
+
+            return true;
+        }
+
+        function obterParametroId() {
+            // Obter a URL atual
+            const url = new URL(window.location.href);
+        
+            // Usar URLSearchParams para acessar os parâmetros da URL
+            const parametros = new URLSearchParams(url.search);
+        
+            // Obter o valor do parâmetro 'id'
+            const id = parametros.get('id');
+        
+            return id;
+        }
+
+        window.onload = carregarUsuario;
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cadastro</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        .w3-modal-content {
+            border-radius: 15px; /* Bordas arredondadas no conteúdo do modal */
+        }
+
+        .w3-container.w3-gray {
+            border-top-left-radius: 15px; /* Bordas arredondadas no cabeçalho */
+            border-top-right-radius: 15px;
+        }
+
+        .w3-button.w3-display-topright {
+            border-top-right-radius: 15px; /* Bordas arredondadas no botão de fechar */
+        }
+    </style>
+</head>
+<body>
+
+<div class="w3-container w3-light-grey" style="max-width: 900px; margin: auto; margin-top: 50px; padding: 20px; border-radius: 5px;">
+    <h2 class="w3-center">Cadastro</h2>
+    <form action="/cadastrar" method="post">
+        <div class="w3-row" style="display: flex; align-items: flex-end; gap: 10px;">
+            <div style="flex: 1;">
+                <label for="name" class="w3-text-gray">Nome</label>
+                <input type="text" id="name" name="name" class="w3-input w3-border w3-round" required>
+            </div>
+            <div style="flex: 1;">
+                <label for="email" class="w3-text-gray">Email</label>
+                <input type="email" id="email" name="email" class="w3-input w3-border w3-round" required>
+            </div>
+            <div style="flex: none; align-self: flex-end;">
+                <button type="submit" class="w3-button w3-blue w3-round">Cadastrar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="w3-container w3-light-grey" style="max-width: 900px; margin: auto; margin-top: 50px; padding: 20px; border-radius: 5px;">
+    <table class="w3-table-all w3-card-4">
+        <thead>
+            <tr class="w3-blue">
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Itera sobre a lista de usuários -->
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <button class="w3-button w3-small w3-gray w3-round"
+                        th:data-id="${user.id}"
+                        th:data-name="${user.name}"
+                        th:data-email="${user.email}"
+                        onclick="abrirModalAlterar(this)"> Editar
+                    </button>
+                    <a th:href="'/excluir/' + ${user.id}"><button class="w3-button w3-small w3-red w3-round">Excluir</button></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para alterar os dados do usuário -->
+<div id="editModal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container w3-gray">
+            <span onclick="document.getElementById('editModal').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+            <h2>Alterar Usuário</h2>
+        </header>
+        <div class="w3-container">
+            <form action="/alterar" method="post">
+                <br>
+                <input type="hidden" id="editId" name="id">
+                <label for="editName">Nome</label>
+                <input type="text" id="editName" name="name" class="w3-input w3-border w3-round" required>
+                <br>
+                <label for="editEmail">Email</label>
+                <input type="email" id="editEmail" name="email" class="w3-input w3-border w3-round" required>
+                <br>
+                <button type="submit" class="w3-button w3-blue w3-round">Alterar</button>
+                <br>        
+                <br>        
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function abrirModalAlterar(button) {
+        // Acessando os dados armazenados nos atributos "data-*"
+        var id = button.getAttribute('data-id');
+        var name = button.getAttribute('data-name');
+        var email = button.getAttribute('data-email');
+        
+        // Armazenando os dados do usuário na variável 'usuarioAtual'
+        usuarioAtual = { id, name, email };
+        
+        // Preenchendo os campos do modal com os valores correspondentes
+        document.getElementById('editName').value = name;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editId').value = id;  // Corrigido para atribuir o 'id', não 'email'
+        
+        // Exibindo o modal
+        document.getElementById('editModal').style.display = 'block';
+    }
+
+</script>
+
+</body>
+</html>

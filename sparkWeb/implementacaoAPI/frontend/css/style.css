@@ -1,0 +1,12 @@
+.w3-modal-content {
+    border-radius: 15px; /* Bordas arredondadas no conteúdo do modal */
+}
+
+.w3-container.w3-black {
+    border-top-left-radius: 15px; /* Bordas arredondadas no cabeçalho */
+    border-top-right-radius: 15px;
+}
+
+.w3-button.w3-display-topright {
+    border-top-right-radius: 15px; /* Bordas arredondadas no botão de fechar */
+}
