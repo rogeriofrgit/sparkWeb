@@ -5,10 +5,9 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-
 public class Main {
     
-    private static final ServicoUsuario userService = new ServicoUsuario();
+    private static final ServicoUsuario servicoUsuario = new ServicoUsuario();
     
     public static void main(String[] args) {
         Spark.port(8080);
@@ -43,7 +42,7 @@ public class Main {
             }
         });
 
-        UserRoutes.processarRotas(userService);
+        RotasUsuario.processarRotas(servicoUsuario);
 
     }
 }

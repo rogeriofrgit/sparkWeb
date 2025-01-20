@@ -13,7 +13,7 @@ public class Main {
     private static final UserService userService = new UserService();
     
     public static void main(String[] args) {
-        Spark.port(8080);
+        Spark.port(8082);
 
         // Configuração do Thymeleaf
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
